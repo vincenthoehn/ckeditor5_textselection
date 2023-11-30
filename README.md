@@ -1,4 +1,4 @@
-# ckeditor5_test
+# CKEditor5 (Keep) Textselection
 
 # Installation
 * Clone the repo into your modules directory:
