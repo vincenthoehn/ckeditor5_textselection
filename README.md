@@ -8,3 +8,4 @@
 * Navigate in the folder and run `npm install` to install the dependencies.
 * Build bundle-file with `npm run build`. This creates the `bundle.js` in the `dist`-folder.
 
+https://github.com/sirtet/ckeditor-dev/tree/master/plugins/textselection
