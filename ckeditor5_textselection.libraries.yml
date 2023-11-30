@@ -1,0 +1,11 @@
+textselection:
+  js:
+    js/build/ttextselection.js: { minified: true }
+  css:
+    theme:
+      css/layout.css: {}
+
+admin:
+  css:
+    theme:
+      css/admin.css: {}
