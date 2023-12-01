@@ -6,5 +6,4 @@ ckeditor5_textselection_textselection:
     label: Textselection
     library: ckeditor5_textselection/textselection
     admin_library: ckeditor5_textselection/admin
-    toolbar_items: false
     elements: false
