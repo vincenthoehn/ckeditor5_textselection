@@ -31,7 +31,7 @@ export default class Textselection extends Plugin {
                 console.log("isSourceEditingMode: ",isSourceEditingMode);
             }else{
                 //editor.model.document.selection.setTo(position);
-                console.log(`isSourceEditingMode: ${isSourceEditingMode}, set back to old postion`);
+                console.log(`isSourceEditingMode: ${isSourceEditingMode}, set back to old position`);
             }
             
 		} );
