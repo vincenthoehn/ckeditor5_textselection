@@ -1,9 +1,4 @@
 import { Plugin } from 'ckeditor5/src/core';
-import { global } from 'ckeditor5/src/utils';
-import { ButtonView } from 'ckeditor5/src/ui';
-import { createDropdown, addListToDropdown, Model } from 'ckeditor5/src/ui';
-import { Collection } from 'ckeditor5/src/utils';
-
 
 export default class Textselection extends Plugin {
 
