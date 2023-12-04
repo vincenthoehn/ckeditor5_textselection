@@ -19,6 +19,14 @@ export default class Textselection extends Plugin {
     init() {
         const editor = this.editor;
 
+		this.listenTo(editor, 'change', () => {
+			editor.model.document.on( 'change', () => {
+				
+				console.log( 'The Document has changed!' );
+			} );
+		});
+
+
         // Event listener for source editing mode change
         this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
 			// Speichern Sie die Position vor dem Moduswechsel
@@ -44,12 +52,16 @@ export default class Textselection extends Plugin {
         const range = selection.getFirstRange();
 		const position = selection.getFirstPosition();
 
+		for (const item of range.getItems()) {
+			console.log ('Selected Text: ',item.data)
+		}
+
 		
 		
         if (position) {
             // Save the cursor position (range) in source editing mode
             this.sourceEditingCursorPosition = position;
-			console.log('Position: ',position);
+			//console.log('Position: ',position);
 			//console.log('Cursor: ', this.sourceEditingCursorPosition);
         }else {
 			console.error('Position empty');
