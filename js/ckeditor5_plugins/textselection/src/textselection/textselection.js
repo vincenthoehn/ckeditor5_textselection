@@ -21,7 +21,7 @@ export default class Textselection extends Plugin {
 
 		this.listenTo(editor, 'change', () => {
 			editor.model.document.on( 'change', () => {
-				
+				this.saveCursorPosition();
 				console.log( 'The Document has changed!' );
 			} );
 		});
