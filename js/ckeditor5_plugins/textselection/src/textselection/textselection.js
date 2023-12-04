@@ -21,6 +21,8 @@ export default class Textselection extends Plugin {
 
         // Event listener for source editing mode change
         this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
+			// Save position before mode change
+            this.saveCursorPosition();
             if (!isSourceEditingMode) {
                 // Switched to WYSIWYG mode
                 this.restoreCursorPosition();
