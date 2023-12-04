@@ -21,8 +21,12 @@ export default class Textselection extends Plugin {
 
         // Event listener for source editing mode change
         this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
-			// Save position before mode change
-            this.saveCursorPosition();
+			// Speichern Sie die Position vor dem Moduswechsel
+            if (!isSourceEditingMode) {
+                this.saveCursorPosition();
+            }
+
+            // Umschalten zwischen den Modi
             if (!isSourceEditingMode) {
                 // Switched to WYSIWYG mode
                 this.restoreCursorPosition();
@@ -38,16 +42,20 @@ export default class Textselection extends Plugin {
         const model = editor.model;
         const selection = model.document.selection;
         const range = selection.getFirstRange();
+		const position = selection.getFirstPosition();
 
 		
 		
-        if (range) {
+        if (position) {
             // Save the cursor position (range) in source editing mode
-            this.sourceEditingCursorPosition = range.start;
-        }
+            this.sourceEditingCursorPosition = position;
+			console.log('Position: ',position);
+			//console.log('Cursor: ', this.sourceEditingCursorPosition);
+        }else {
+			console.error('Position empty');
+		}
 		
-		console.log('Range: ',range);
-		console.log('Cursor: ', this.sourceEditingCursorPosition);
+		
 		
     }
 
@@ -55,12 +63,14 @@ export default class Textselection extends Plugin {
         const editor = this.editor;
         const model = editor.model;
 
-		console.log('Restore cursor');
+		//console.log('Restore cursor');
 		
         if (this.sourceEditingCursorPosition) {
             // Restore the cursor position in WYSIWYG mode
             model.change(writer => {
-                model.document.selection.set(writer.createPositionAt(this.sourceEditingCursorPosition));
+                //model.document.selection.setTo(this.sourceEditingCursorPosition);
+				//model.document.selection._setTo(writer.createPositionAt(this.sourceEditingCursorPosition));
+				writer.insertText('Test', this.sourceEditingCursorPosition);
             });
         }
 		
