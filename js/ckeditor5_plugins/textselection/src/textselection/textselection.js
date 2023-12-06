@@ -19,28 +19,19 @@ export default class Textselection extends Plugin {
     init() {
         const editor = this.editor;
 
-		this.listenTo(editor, 'change', () => {
-			editor.model.document.on( 'change', () => {
-				this.saveCursorPosition();
-				console.log( 'The Document has changed!' );
-			} );
-		});
+        editor.model.document.on( 'change', () => {
+			this.saveCursorPosition();
+			console.log( 'The Document has changed!');
+		} );
 
 
         // Event listener for source editing mode change
         this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
-			// Speichern Sie die Position vor dem Moduswechsel
-            if (!isSourceEditingMode) {
-                this.saveCursorPosition();
-            }
 
             // Umschalten zwischen den Modi
             if (!isSourceEditingMode) {
                 // Switched to WYSIWYG mode
                 this.restoreCursorPosition();
-            } else {
-                // Switched to source editing mode
-                this.saveCursorPosition();
             }
         });
     }
@@ -51,12 +42,6 @@ export default class Textselection extends Plugin {
         const selection = model.document.selection;
         const range = selection.getFirstRange();
 		const position = selection.getFirstPosition();
-
-		for (const item of range.getItems()) {
-			console.log ('Selected Text: ',item.data)
-		}
-
-		
 		
         if (position) {
             // Save the cursor position (range) in source editing mode
@@ -81,7 +66,7 @@ export default class Textselection extends Plugin {
             // Restore the cursor position in WYSIWYG mode
             model.change(writer => {
                 //model.document.selection.setTo(this.sourceEditingCursorPosition);
-				//model.document.selection._setTo(writer.createPositionAt(this.sourceEditingCursorPosition));
+				model.document.selection._setTo(writer.createPositionAt(this.sourceEditingCursorPosition));
 				writer.insertText('Test', this.sourceEditingCursorPosition);
             });
         }
