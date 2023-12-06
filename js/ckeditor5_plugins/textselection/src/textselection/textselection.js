@@ -21,7 +21,7 @@ export default class Textselection extends Plugin {
 
         editor.model.document.on( 'change', () => {
 			this.saveCursorPosition();
-			console.log('NM: ', 'The Document has changed!', editor.getData());
+			console.log('NM: ', 'The Document has changed!');
 		} );
 
         // Event listener for source editing mode change
@@ -31,8 +31,10 @@ export default class Textselection extends Plugin {
                 editor.model.change(writer => {
                     writer.setSelection(this.sourceEditingCursorPosition);
                 });
+                if (editor.model.document.selection.getFirstRange() != this.sourceEditingCursorPosition){
+                    console.error('Position stimmt nicht überein!');
+                }
                 console.log('SetSelection', this.sourceEditingCursorPosition);
-                console.log(editor.getData());
                 // Switched to WYSIWYG mode
                 //this.restoreCursorPosition();
             }
@@ -43,8 +45,8 @@ export default class Textselection extends Plugin {
         const editor = this.editor;
         const model = editor.model;
         const selection = model.document.selection;
-        const range = selection.getFirstRange();
-		const position = selection.getFirstPosition();
+        const position = selection.getFirstRange();
+		//const position = selection.getFirstPosition();
 		
         if (position) {
             // Save the cursor position (range) in source editing mode
