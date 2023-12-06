@@ -21,17 +21,20 @@ export default class Textselection extends Plugin {
 
         editor.model.document.on( 'change', () => {
 			this.saveCursorPosition();
-			console.log( 'The Document has changed!');
+			console.log('NM: ', 'The Document has changed!', editor.getData());
 		} );
-
 
         // Event listener for source editing mode change
         this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
-
             // Umschalten zwischen den Modi
-            if (!isSourceEditingMode) {
+            if (isSourceEditingMode && this.sourceEditingCursorPosition) {
+                editor.model.change(writer => {
+                    writer.setSelection(this.sourceEditingCursorPosition);
+                });
+                console.log('SetSelection', this.sourceEditingCursorPosition);
+                console.log(editor.getData());
                 // Switched to WYSIWYG mode
-                this.restoreCursorPosition();
+                //this.restoreCursorPosition();
             }
         });
     }
