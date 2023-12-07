@@ -32,7 +32,7 @@ export default class Textselection extends Plugin {
                     writer.setSelection(this.sourceEditingCursorPosition);
                 });
                 if (editor.model.document.selection.getFirstRange() != this.sourceEditingCursorPosition){
-                    console.error('Position stimmt nicht überein!');
+                    console.warn('Position stimmt nicht überein!');
                 }
                 console.log('SetSelection', this.sourceEditingCursorPosition);
                 // Switched to WYSIWYG mode
