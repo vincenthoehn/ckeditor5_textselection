@@ -71,7 +71,7 @@ export default class Textselection extends Plugin {
                     //console.log(sourceEditingCursorPosition);
                     if (textareaElement) {
                         // Set the cursor position using standard DOM methods
-                        textareaElement.setSelectionRange(0, 5);
+                        textareaElement.setSelectionRange(0, this.sourceEditingCursorPosition);
                     }
                 }
             });
