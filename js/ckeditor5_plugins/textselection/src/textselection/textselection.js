@@ -28,15 +28,11 @@ export default class Textselection extends Plugin {
         this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
             // Umschalten zwischen den Modi
             if (isSourceEditingMode && this.sourceEditingCursorPosition) {
-                editor.model.change(writer => {
-                    writer.setSelection(this.sourceEditingCursorPosition);
-                });
                 if (editor.model.document.selection.getFirstRange() != this.sourceEditingCursorPosition){
                     console.warn('Position stimmt nicht überein!');
                 }
-                console.log('SetSelection', this.sourceEditingCursorPosition);
                 // Switched to WYSIWYG mode
-                //this.restoreCursorPosition();
+                this.restoreCursorPosition();
             }
         });
     }
@@ -46,8 +42,9 @@ export default class Textselection extends Plugin {
         const model = editor.model;
         const selection = model.document.selection;
         const position = selection.getFirstRange();
-		//const position = selection.getFirstPosition();
-		
+
+        const cursorPos = this.getCursorPos(model.document);
+		console.log("Selection: ", model.document.selection)
         if (position) {
             // Save the cursor position (range) in source editing mode
             this.sourceEditingCursorPosition = position;
@@ -65,17 +62,20 @@ export default class Textselection extends Plugin {
         const editor = this.editor;
         const model = editor.model;
 
-		//console.log('Restore cursor');
-		
         if (this.sourceEditingCursorPosition) {
             // Restore the cursor position in WYSIWYG mode
             model.change(writer => {
-                //model.document.selection.setTo(this.sourceEditingCursorPosition);
-				model.document.selection._setTo(writer.createPositionAt(this.sourceEditingCursorPosition));
-				writer.insertText('Test', this.sourceEditingCursorPosition);
+                const sourceEditingPlugin = editor.plugins.get('SourceEditing');
+                if (sourceEditingPlugin && sourceEditingPlugin.isSourceEditingMode) {
+                    // We are in source editing mode, try to access the textarea element directly
+                    const textareaElement = document.querySelector('.ck-source-editing-area textarea');
+                    //console.log(sourceEditingCursorPosition);
+                    if (textareaElement) {
+                        // Set the cursor position using standard DOM methods
+                        textareaElement.setSelectionRange(0, 5);
+                    }
+                }
             });
         }
-		
-	}
-
+    }
 }
