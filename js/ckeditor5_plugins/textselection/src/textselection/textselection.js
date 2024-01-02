@@ -41,10 +41,9 @@ export default class Textselection extends Plugin {
         const editor = this.editor;
         const model = editor.model;
         const selection = model.document.selection;
-        const position = selection.getFirstRange();
+        //const position = selection.getFirstRange();
 
-        const cursorPos = this.getCursorPos(model.document);
-		console.log("Selection: ", model.document.selection)
+        const position = selection.getLastPosition();
         if (position) {
             // Save the cursor position (range) in source editing mode
             this.sourceEditingCursorPosition = position;
