@@ -28,9 +28,6 @@ export default class Textselection extends Plugin {
         this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
             // Umschalten zwischen den Modi
             if (isSourceEditingMode && this.sourceEditingCursorPosition) {
-                if (editor.model.document.selection.getFirstRange() != this.sourceEditingCursorPosition){
-                    console.warn('Position stimmt nicht überein!');
-                }
                 // Switched to WYSIWYG mode
                 this.restoreCursorPosition();
             }
