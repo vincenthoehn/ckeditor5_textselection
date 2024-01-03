@@ -16,12 +16,30 @@ export default class Textselection extends Plugin {
 		return 'TextSelection';
 	}
 
+    constructor(...args){
+        super(...args)
+        this.sourceEditingCursorPosition = -1;
+        console.log('Textselection created.');
+    }
+
+    setCursorPos(cursorPos) {
+        console.log("Set cursorPos to:",cursorPos)
+        if(cursorPos.path[1] !== 0)
+            this.sourceEditingCursorPosition = cursorPos;
+        else console.log("Skipped ...")
+    }
+
+    getCursorPos(){
+        return this.cursorPos;
+    }
+
     init() {
         const editor = this.editor;
+        let cursorPosition = -1;
 
         editor.model.document.on( 'change', () => {
 			this.saveCursorPosition();
-			console.log('NM: ', 'The Document has changed!');
+        //cursorPosition = this.editor.model.document.selection.getLastPosition()
 		} );
 
         // Event listener for source editing mode change
@@ -43,8 +61,8 @@ export default class Textselection extends Plugin {
         const position = selection.getLastPosition();
         if (position) {
             // Save the cursor position (range) in source editing mode
-            this.sourceEditingCursorPosition = position;
-			//console.log('Position: ',position);
+           this.setCursorPos(position);
+			console.log('Position: ',position);
 			//console.log('Cursor: ', this.sourceEditingCursorPosition);
         }else {
 			console.error('Position empty');
@@ -65,10 +83,11 @@ export default class Textselection extends Plugin {
                 if (sourceEditingPlugin && sourceEditingPlugin.isSourceEditingMode) {
                     // We are in source editing mode, try to access the textarea element directly
                     const textareaElement = document.querySelector('.ck-source-editing-area textarea');
-                    //console.log(sourceEditingCursorPosition);
+                    console.log(this.sourceEditingCursorPosition.path);
+                    const pos = this.sourceEditingCursorPosition.path[1];
                     if (textareaElement) {
                         // Set the cursor position using standard DOM methods
-                        textareaElement.setSelectionRange(0, this.sourceEditingCursorPosition);
+                        textareaElement.setSelectionRange(pos, pos+1);
                     }
                 }
             });
