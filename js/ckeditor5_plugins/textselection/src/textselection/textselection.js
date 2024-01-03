@@ -30,7 +30,7 @@ export default class Textselection extends Plugin {
     }
 
     getCursorPos(){
-        return this.cursorPos;
+        return this.sourceEditingCursorPosition;
     }
 
     init() {
@@ -38,6 +38,9 @@ export default class Textselection extends Plugin {
         let cursorPosition = -1;
 
         editor.model.document.on( 'change', () => {
+            editor.model.change(writer => {
+                editor.model.insertContent(writer.createText( '📌' ) );
+            });
 			this.saveCursorPosition();
         //cursorPosition = this.editor.model.document.selection.getLastPosition()
 		} );
@@ -62,7 +65,7 @@ export default class Textselection extends Plugin {
         if (position) {
             // Save the cursor position (range) in source editing mode
            this.setCursorPos(position);
-			console.log('Position: ',position);
+           this.convertPosition();
 			//console.log('Cursor: ', this.sourceEditingCursorPosition);
         }else {
 			console.error('Position empty');
@@ -75,6 +78,7 @@ export default class Textselection extends Plugin {
     restoreCursorPosition() {
         const editor = this.editor;
         const model = editor.model;
+        this.convertPosition();
 
         if (this.sourceEditingCursorPosition) {
             // Restore the cursor position in WYSIWYG mode
@@ -83,14 +87,31 @@ export default class Textselection extends Plugin {
                 if (sourceEditingPlugin && sourceEditingPlugin.isSourceEditingMode) {
                     // We are in source editing mode, try to access the textarea element directly
                     const textareaElement = document.querySelector('.ck-source-editing-area textarea');
-                    console.log(this.sourceEditingCursorPosition.path);
                     const pos = this.sourceEditingCursorPosition.path[1];
+                    const lines = String(textareaElement['value']).split("\n");
+                    console.log('lines: ', lines);
+                    let offset = 0;
+
+                    lines/*.slice(0,this.sourceEditingCursorPosition[0]+1)*/.forEach((l,i) => {
+                        if (i<this.sourceEditingCursorPosition.path[0]){
+                            offset += l.length;
+                        }
+                    });
+                    console.log(this.sourceEditingCursorPosition.path,offset);
                     if (textareaElement) {
                         // Set the cursor position using standard DOM methods
-                        textareaElement.setSelectionRange(pos, pos+1);
+
+                        textareaElement.setSelectionRange(pos+offset, pos+offset+1);
+                        editor.editing.view.focus();
                     }
                 }
             });
         }
+    }
+
+    convertPosition(){
+        const editor = this.editor;
+        const data = editor.getData();
+        console.log('Data: ', String(data).split("\n"));
     }
 }
