@@ -38,10 +38,8 @@ export default class Textselection extends Plugin {
         let cursorPosition = -1;
 
         editor.model.document.on( 'change', () => {
-            editor.model.change(writer => {
-                editor.model.insertContent(writer.createText( '📌' ) );
-            });
-			this.saveCursorPosition();
+            this.saveCursorPosition();
+            //this.createAnchor();
         //cursorPosition = this.editor.model.document.selection.getLastPosition()
 		} );
 
@@ -113,5 +111,15 @@ export default class Textselection extends Plugin {
         const editor = this.editor;
         const data = editor.getData();
         console.log('Data: ', String(data).split("\n"));
+    }
+
+    createAnchor() {
+        const editor = this.editor;
+        let data = String(editor.getData());
+        data = data.replaceAll('📌','');
+        //editor.setData(data);
+        editor.model.change(writer => {
+            editor.model.insertContent(writer.createText( '📌' ) );
+        });
     }
 }
