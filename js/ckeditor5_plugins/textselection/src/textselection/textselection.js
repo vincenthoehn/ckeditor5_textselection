@@ -3,32 +3,29 @@ import { ButtonView, createDropdown, addListToDropdown, ViewModel } from 'ckedit
 import { Collection } from 'ckeditor5/src/utils';
 
 export default class Textselection extends Plugin {
-
     init() {
         const editor = this.editor;
 
-        editor.ui.componentFactory.add( 'textselection', () => {
-            // The button will be an instance of ButtonView.
-            const button = new ButtonView();
+        // Add a button to the editor UI
+        editor.ui.componentFactory.add('textselection', locale => {
+            const view = new ButtonView(locale);
 
-            button.set( {
-                label: 'Textselection',
-                withText: true
-            } );
+            view.set({
+                label: 'Text einfügen',
+                withText: true,
+                tooltip: true
+            });
 
-            // Execute a callback function when the button is clicked.
-            button.on( 'execute', () => {
-                const now = new Date();
+            // Execute a command when the button is clicked
+            view.on('execute', () => {
+                editor.model.change(writer => {
+                    // Insert text at the current cursor position
+                    const insertPosition = editor.model.document.selection.getFirstPosition();
+                    writer.insertText('Eingefügter Text', insertPosition);
+                });
+            });
 
-                // Change the model using the model writer.
-                editor.model.change( writer => {
-
-                    // Insert the text at the user's current position.
-                    editor.model.insertContent( writer.createText( now.toString() ) );
-                } );
-            } );
-
-            return button;
-        } );
-      }
+            return view;
+        });
+    }
 }
