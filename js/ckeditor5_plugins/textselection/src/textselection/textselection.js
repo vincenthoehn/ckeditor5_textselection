@@ -19,22 +19,21 @@ export default class Textselection extends Plugin {
             });
 
              // Execute a command when the button is clicked
-             view.on('execute', () => {
+            view.on('execute', () => {
                 editor.model.change(writer => {
-                    const { found, item } = checkForPinSymbol();
-
-                    if (found) {
+                    if (this.pinPosition) {
                         // Remove existing pin symbol using deleteContent
-                        const range = editor.model.createRange(
-                            editor.model.createPositionBefore(item),
-                            editor.model.createPositionAfter(item)
-                        );
-                        writer.setSelection(range);
+                        writer.setSelection(writer.createRange(this.pinPosition));
                         writer.deleteContent(writer.selection);
+                        this.pinPosition = null;  // Reset pin position
                     } else {
                         // Insert new pin symbol at the current cursor position
                         const insertPosition = editor.model.document.selection.getFirstPosition();
                         writer.insertText(pinSymbol, insertPosition);
+                        this.pinPosition = editor.model.createRange(
+                            insertPosition,
+                            insertPosition.getShiftedBy(pinSymbol.length)
+                        );
                     }
 
                     // Update button state after execution
