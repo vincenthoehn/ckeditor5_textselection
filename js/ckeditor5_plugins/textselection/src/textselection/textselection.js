@@ -40,7 +40,7 @@ export default class Textselection extends Plugin {
         const editor = this.editor;
         let data = String(editor.getData());
         data = data.replaceAll('📌','');
-        editor.setData(data);
+        //editor.setData(data);
         editor.model.change(writer => {
             editor.model.insertContent(writer.createText( '📌' ) );
         });
