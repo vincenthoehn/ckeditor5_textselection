@@ -6,6 +6,8 @@ export default class Textselection extends Plugin {
     init() {
         const editor = this.editor;
 
+        const pinSymbol = '📍';
+
         // Add a button to the editor UI
         editor.ui.componentFactory.add('textselection', locale => {
             const view = new ButtonView(locale);
@@ -21,7 +23,7 @@ export default class Textselection extends Plugin {
                 editor.model.change(writer => {
                     // Insert text at the current cursor position
                     const insertPosition = editor.model.document.selection.getFirstPosition();
-                    writer.insertText('Eingefügter Text', insertPosition);
+                    writer.insertText(pinSymbol, insertPosition);
                 });
             });
 
