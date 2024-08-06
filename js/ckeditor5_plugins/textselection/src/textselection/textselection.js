@@ -31,7 +31,7 @@ export default class Textselection extends Plugin {
                         // Remove existing pin symbol using deleteContent
                         const range = this.pinPosition;
                         writer.setSelection(range);
-                        writer.deleteContent(writer.selection, { doNotAutoparagraph: true });
+                        writer.deleteSelection();
                         this.pinPosition = null;  // Reset pin position
                     } else {
                         // Insert new pin symbol at the current cursor position
