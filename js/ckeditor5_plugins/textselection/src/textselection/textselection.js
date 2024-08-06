@@ -30,7 +30,7 @@ export default class Textselection extends Plugin {
         const pinSymbol = '📍';
 
         // Kontextmenü hinzufügen
-        editor.ui.componentFactory.add( 'pinButton', locale => {
+        editor.ui.componentFactory.add( 'textselection', locale => {
             const dropdownView = createDropdown( locale );
             addListToDropdown( dropdownView, [
                 {
