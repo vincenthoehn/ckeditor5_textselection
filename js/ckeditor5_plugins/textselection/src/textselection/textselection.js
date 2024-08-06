@@ -3,6 +3,12 @@ import { ButtonView, createDropdown, addListToDropdown, ViewModel } from 'ckedit
 import { Collection } from 'ckeditor5/src/utils';
 
 export default class Textselection extends Plugin {
+
+    constructor(editor) {
+        super(editor);
+        // Speichert die Position der eingefügten Pinnadel
+        this.pinPosition = null;
+    }
     init() {
         const editor = this.editor;
 
@@ -19,17 +25,20 @@ export default class Textselection extends Plugin {
             });
 
              // Execute a command when the button is clicked
-            view.on('execute', () => {
+             view.on('execute', () => {
                 editor.model.change(writer => {
                     if (this.pinPosition) {
                         // Remove existing pin symbol using deleteContent
-                        writer.setSelection(writer.createRange(this.pinPosition));
+                        const range = this.pinPosition;
+                        writer.setSelection(range);
                         writer.deleteContent(writer.selection);
                         this.pinPosition = null;  // Reset pin position
                     } else {
                         // Insert new pin symbol at the current cursor position
                         const insertPosition = editor.model.document.selection.getFirstPosition();
                         writer.insertText(pinSymbol, insertPosition);
+
+                        // Nach dem Einfügen der Pinnadel die Position korrekt setzen
                         this.pinPosition = editor.model.createRange(
                             insertPosition,
                             insertPosition.getShiftedBy(pinSymbol.length)
