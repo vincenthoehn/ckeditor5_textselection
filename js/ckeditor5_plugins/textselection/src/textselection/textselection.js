@@ -38,8 +38,8 @@ export default class Textselection extends Plugin {
         let cursorPosition = -1;
 
         editor.model.document.on( 'change', () => {
-            this.saveCursorPosition();
-            //this.createAnchor();
+            //this.saveCursorPosition();
+            this.createAnchor();
         //cursorPosition = this.editor.model.document.selection.getLastPosition()
 		} );
 
