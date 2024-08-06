@@ -37,7 +37,7 @@ export default class Textselection extends Plugin {
                     }
 
                     // Update button state after execution
-                    updateButtonState();
+                    //updateButtonState();
                 });
             });
 
