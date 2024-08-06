@@ -1,57 +1,34 @@
 import { Plugin } from 'ckeditor5/src/core';
-import { createDropdown, addListToDropdown, ViewModel } from 'ckeditor5/src/ui';
+import { ButtonView, createDropdown, addListToDropdown, ViewModel } from 'ckeditor5/src/ui';
 import { Collection } from 'ckeditor5/src/utils';
 
 export default class Textselection extends Plugin {
 
-    /**
-	 * @inheritDoc
-	 */
-	static get requires() {
-		return [ 'SourceEditing' ];
-	}
-
-    /**
-	 * @inheritDoc
-	 */
-	static get pluginName() {
-		return 'TextSelection';
-	}
-
-    constructor(...args){
-        super(...args)
-        this.sourceEditingCursorPosition = -1;
-        console.log('Textselection created.');
-    }
-
-
     init() {
         const editor = this.editor;
 
-        // Definiere ein Symbol, das eingefügt werden soll, z.B. eine Pinnadel
         const pinSymbol = '📍';
-
-        // Kontextmenü hinzufügen
-        editor.ui.componentFactory.add( 'textselection', locale => {
-            const dropdownView = createDropdown( locale );
-            addListToDropdown( dropdownView, [
-                {
-                    type: 'button',
-                    model: new ViewModel( {
-                        label: 'Insert Pin',
-                        withText: true,
-                        tooltip: true
-                    } )
-                }
-            ] );
-
-            dropdownView.on( 'execute', () => {
-                const viewFragment = editor.data.processor.toView( pinSymbol );
-                const modelFragment = editor.data.toModel( viewFragment );
-                editor.model.insertContent( modelFragment );
-            } );
-
-            return dropdownView;
-        } );
-    }
+    
+        editor.ui.componentFactory.add("textselection", () => {
+          // The button will be an instance of ButtonView.
+          const button = new ButtonView();
+    
+          button.set({
+            label: "Insert Pin",
+            withText: true,
+          });
+    
+          //Execute a callback function when the button is clicked
+          button.on("execute", () => {
+    
+            //Change the model using the model writer
+            editor.model.change((writer) => {
+              //Insert the text at the user's current position
+              editor.model.insertContent(writer.createText(pinSymbol));
+            });
+          });
+    
+          return button;
+        });
+      }
 }
