@@ -1,4 +1,6 @@
 import { Plugin } from 'ckeditor5/src/core';
+import { createDropdown, addListToDropdown, ViewModel } from 'ckeditor5/src/ui';
+import { Collection } from 'ckeditor5/src/utils';
 
 export default class Textselection extends Plugin {
 
@@ -35,7 +37,7 @@ export default class Textselection extends Plugin {
             addListToDropdown( dropdownView, [
                 {
                     type: 'button',
-                    model: new Model( {
+                    model: new ViewModel( {
                         label: 'Insert Pin',
                         withText: true,
                         tooltip: true
