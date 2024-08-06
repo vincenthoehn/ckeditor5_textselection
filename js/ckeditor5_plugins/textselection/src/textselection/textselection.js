@@ -1,6 +1,7 @@
 import { Plugin } from 'ckeditor5/src/core';
 import { ButtonView, createDropdown, addListToDropdown, ViewModel } from 'ckeditor5/src/ui';
-import { Collection } from 'ckeditor5/src/utils';
+
+import pinIcon from '../../../../../icons/pinIcon.svg';
 
 export default class Textselection extends Plugin {
     init() {
@@ -15,6 +16,7 @@ export default class Textselection extends Plugin {
             view.set({
                 label: '📌',
                 withText: true,
+                icon: pinIcon,
                 tooltip: true
             });
 
