@@ -6,14 +6,14 @@ export default class Textselection extends Plugin {
     init() {
         const editor = this.editor;
 
-        const pinSymbol = '📍';
+        const pinSymbol = '📌';
 
         // Add a button to the editor UI
         editor.ui.componentFactory.add('textselection', locale => {
             const view = new ButtonView(locale);
 
             view.set({
-                label: '📍',
+                label: '📌',
                 withText: true,
                 tooltip: true
             });
@@ -21,9 +21,31 @@ export default class Textselection extends Plugin {
             // Execute a command when the button is clicked
             view.on('execute', () => {
                 editor.model.change(writer => {
-                    // Insert text at the current cursor position
-                    const insertPosition = editor.model.document.selection.getFirstPosition();
-                    writer.insertText(pinSymbol, insertPosition);
+                    const modelRoot = editor.model.document.getRoot();
+                    let pinRange = null;
+
+                    // Check if a pinSymbol already exists
+                    for (const range of editor.model.createRangeIn(modelRoot)) {
+                        for (const item of range.getItems()) {
+                            if (item.is('textProxy') && item.data.includes(pinSymbol)) {
+                                pinRange = editor.model.createRange(
+                                    editor.model.createPositionBefore(item),
+                                    editor.model.createPositionAfter(item)
+                                );
+                                break;
+                            }
+                        }
+                        if (pinRange) break;
+                    }
+
+                    // If pinSymbol exists, remove it
+                    if (pinRange) {
+                        writer.remove(pinRange);
+                    } else {
+                        // Insert text at the current cursor position
+                        const insertPosition = editor.model.document.selection.getFirstPosition();
+                        writer.insertText(pinSymbol, insertPosition);
+                    }
                 });
             });
 
