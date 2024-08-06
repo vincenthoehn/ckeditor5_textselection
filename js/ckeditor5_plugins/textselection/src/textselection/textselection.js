@@ -13,7 +13,7 @@ export default class Textselection extends Plugin {
             const view = new ButtonView(locale);
 
             view.set({
-                label: 'Text einfügen',
+                label: '📍',
                 withText: true,
                 tooltip: true
             });
