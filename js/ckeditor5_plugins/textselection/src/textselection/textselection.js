@@ -7,28 +7,28 @@ export default class Textselection extends Plugin {
     init() {
         const editor = this.editor;
 
-        const pinSymbol = '📍';
-    
-        editor.ui.componentFactory.add("textselection", () => {
-          // The button will be an instance of ButtonView.
-          const button = new ButtonView();
-    
-          button.set({
-            label: "Insert Pin",
-            withText: true,
-          });
-    
-          //Execute a callback function when the button is clicked
-          button.on("execute", () => {
-    
-            //Change the model using the model writer
-            editor.model.change((writer) => {
-              //Insert the text at the user's current position
-              editor.model.insertContent(writer.createText(pinSymbol));
-            });
-          });
-    
-          return button;
-        });
+        editor.ui.componentFactory.add( 'textselection', () => {
+            // The button will be an instance of ButtonView.
+            const button = new ButtonView();
+
+            button.set( {
+                label: 'Textselection',
+                withText: true
+            } );
+
+            // Execute a callback function when the button is clicked.
+            button.on( 'execute', () => {
+                const now = new Date();
+
+                // Change the model using the model writer.
+                editor.model.change( writer => {
+
+                    // Insert the text at the user's current position.
+                    editor.model.insertContent( writer.createText( now.toString() ) );
+                } );
+            } );
+
+            return button;
+        } );
       }
 }
