@@ -23,10 +23,34 @@ export default class Textselection extends Plugin {
                     // Insert text at the current cursor position
                     const insertPosition = editor.model.document.selection.getFirstPosition();
                     writer.insertText(pinSymbol, insertPosition);
+                    copyToClipboard(pinSymbol);
                 });
             });
 
             return view;
         });
+
+        this.listenTo(editor.plugins.get('SourceEditing'), 'change:isSourceEditingMode', (evt, name, isSourceEditingMode) => {
+            // Umschalten zwischen den Modi
+            if (isSourceEditingMode) {
+                // Switched to WYSIWYG mode
+                view.set({isEnabled:false});
+                
+            }else{
+                view.set({isEnabled:true});
+            }
+        });
+
+         // Copy to clipboard
+         const copyToClipboard = text => {
+            navigator.clipboard.writeText(text).then(
+                () => {
+                    console.log('Copy to clipboard successful!');
+                },
+                err => {
+                    console.error('Error on copy to clipboard: ', err);
+                }
+            );
+        };
     }
 }
