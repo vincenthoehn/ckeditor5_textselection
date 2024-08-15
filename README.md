@@ -12,8 +12,8 @@ This project provides a CKEditor5 plugin for Drupal. Before you switch in Source
 
 ## Branches
 
-- main 
-- dev 
+- main (recommended)
+- dev (use at your own risk)
 
 ## ToDo
 
