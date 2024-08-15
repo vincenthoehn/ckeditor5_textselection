@@ -1,6 +1,6 @@
 # Drupal CKEditor5 (Keep) Textselection
 
-This project provides a CKEditor5 plugin for Drupal. If you switch between Sourceediting and Normal-Mode, the plugin remembers the cursor postion.
+This project provides a CKEditor5 plugin for Drupal. Before you switch in Sourceediting-Mode, you are able to set a pin. This can help to find the exact position.
 
 # Installation
 * Enable ckeditor5 
