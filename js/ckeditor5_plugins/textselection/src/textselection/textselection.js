@@ -2,6 +2,11 @@ import { Plugin } from 'ckeditor5/src/core';
 import { ButtonView } from 'ckeditor5/src/ui';
 
 export default class Textselection extends Plugin {
+    constructor(editor) {
+        super(editor);
+        this.savedRange = null;  // To store the range before switching modes
+    }
+
     init() {
         const editor = this.editor;
         const pinSymbol = '📌';
@@ -33,25 +38,47 @@ export default class Textselection extends Plugin {
             return view;
         });
 
-        // Listen for the mode switch and scroll to cursor when switching back to WYSIWYG
+        // Save the cursor position when switching to SourceEditing mode
         this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
-            if (!isSourceEditingMode) {
-                // Switch back to WYSIWYG - Scroll to the cursor
-                this.scrollToCursorPosition();
+            if (isSourceEditingMode) {
+                // Save the current selection (cursor) before switching to SourceEditing mode
+                this.saveCursorPosition();
+            } else {
+                // Restore the cursor position after switching back to WYSIWYG mode
+                this.restoreCursorPosition();
             }
         });
     }
 
-    scrollToCursorPosition() {
-        const domConverter = this.editor.editing.view.domConverter;
-        const viewSelection = this.editor.editing.view.document.selection;
-        const domRange = domConverter.viewRangeToDom(viewSelection.getFirstRange());
+    saveCursorPosition() {
+        const editor = this.editor;
+        const view = editor.editing.view;
 
-        if (domRange) {
-            const scrollTarget = domRange.startContainer;
-            if (scrollTarget && scrollTarget.nodeType === Node.ELEMENT_NODE) {
-                scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+        // Get the current selection in the view
+        const viewSelection = view.document.selection;
+        this.savedRange = viewSelection.getFirstRange();  // Save the range
+    }
+
+    restoreCursorPosition() {
+        const editor = this.editor;
+        const model = editor.model;
+        const view = editor.editing.view;
+
+        // Make sure we have a saved range before attempting to restore
+        if (this.savedRange) {
+            // Restore the saved range in the model
+            model.change(writer => {
+                const newRange = writer.createRange(
+                    model.createPositionFromPath(model.document.getRoot(), this.savedRange.start.path),
+                    model.createPositionFromPath(model.document.getRoot(), this.savedRange.end.path)
+                );
+
+                // Set the restored selection in the model
+                writer.setSelection(newRange);
+
+                // Scroll the view to the restored selection
+                view.scrollToTheSelection();
+            });
         }
     }
 }
