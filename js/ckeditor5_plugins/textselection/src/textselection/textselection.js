@@ -4,12 +4,12 @@ import { ButtonView } from 'ckeditor5/src/ui';
 export default class Textselection extends Plugin {
     constructor(editor) {
         super(editor);
-        this.pinSymbol = '📌';  // Define the pin symbol
         this.savedRange = null;  // To store the range before switching modes
     }
 
     init() {
         const editor = this.editor;
+        const pinSymbol = '📌';
         const sourceEditing = editor.plugins.get('SourceEditing');
 
         // Add a button to the editor UI
@@ -17,7 +17,7 @@ export default class Textselection extends Plugin {
             const view = new ButtonView(locale);
 
             view.set({
-                label: this.pinSymbol,
+                label: '📌',
                 withText: true,
                 tooltip: true
             });
@@ -25,9 +25,8 @@ export default class Textselection extends Plugin {
             // Execute a command when the button is clicked
             view.on('execute', () => {
                 editor.model.change(writer => {
-                    // Insert a new pin symbol at the current cursor position
                     const insertPosition = editor.model.document.selection.getFirstPosition();
-                    writer.insertText(this.pinSymbol, insertPosition);
+                    writer.insertText(pinSymbol, insertPosition);
                 });
             });
 
