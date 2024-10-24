@@ -4,12 +4,12 @@ import { ButtonView } from 'ckeditor5/src/ui';
 export default class Textselection extends Plugin {
     constructor(editor) {
         super(editor);
-        this.pinSymbol = '📌';  // Define the pin symbol
         this.savedRange = null;  // To store the range before switching modes
     }
 
     init() {
         const editor = this.editor;
+        const pinSymbol = '📌';
         const sourceEditing = editor.plugins.get('SourceEditing');
 
         // Add a button to the editor UI
@@ -17,7 +17,7 @@ export default class Textselection extends Plugin {
             const view = new ButtonView(locale);
 
             view.set({
-                label: this.pinSymbol,
+                label: '📌',
                 withText: true,
                 tooltip: true
             });
@@ -25,15 +25,14 @@ export default class Textselection extends Plugin {
             // Execute a command when the button is clicked
             view.on('execute', () => {
                 editor.model.change(writer => {
-                    // Insert the pin symbol at the current cursor position
                     const insertPosition = editor.model.document.selection.getFirstPosition();
-                    writer.insertText(this.pinSymbol, insertPosition);
+                    writer.insertText(pinSymbol, insertPosition);
                 });
             });
 
             // Handle enabling/disabling the button based on SourceEditing mode
             this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
-                view.isEnabled = !isSourceEditingMode;  // Disable the button in SourceEditing mode
+                view.isEnabled = !isSourceEditingMode;  // Disable in SourceEditing mode
             });
 
             return view;
@@ -42,7 +41,7 @@ export default class Textselection extends Plugin {
         // Save the cursor position when switching to SourceEditing mode
         this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
             if (isSourceEditingMode) {
-                // Save the current model selection (cursor) before switching to SourceEditing mode
+                // Save the current selection (cursor) before switching to SourceEditing mode
                 this.saveCursorPosition();
             } else {
                 // Restore the cursor position after switching back to WYSIWYG mode
@@ -51,31 +50,34 @@ export default class Textselection extends Plugin {
         });
     }
 
-    // Save the model cursor position (selection range)
     saveCursorPosition() {
         const editor = this.editor;
-        const model = editor.model;
-        const selection = model.document.selection;
+        const view = editor.editing.view;
 
-        // Save the current range from the model selection
-        if (selection.rangeCount > 0) {
-            this.savedRange = selection.getFirstRange().clone();
-        }
+        // Get the current selection in the view
+        const viewSelection = view.document.selection;
+        this.savedRange = viewSelection.getFirstRange();  // Save the range
     }
 
-    // Restore the model cursor position
     restoreCursorPosition() {
         const editor = this.editor;
         const model = editor.model;
+        const view = editor.editing.view;
 
         // Make sure we have a saved range before attempting to restore
         if (this.savedRange) {
+            // Restore the saved range in the model
             model.change(writer => {
-                // Restore the saved selection range
-                writer.setSelection(this.savedRange);
+                const newRange = writer.createRange(
+                    model.createPositionFromPath(model.document.getRoot(), this.savedRange.start.path),
+                    model.createPositionFromPath(model.document.getRoot(), this.savedRange.end.path)
+                );
+
+                // Set the restored selection in the model
+                writer.setSelection(newRange);
 
                 // Scroll the view to the restored selection
-                editor.editing.view.scrollToTheSelection();
+                view.scrollToTheSelection();
             });
         }
     }
