@@ -4,12 +4,12 @@ import { ButtonView } from 'ckeditor5/src/ui';
 export default class Textselection extends Plugin {
     constructor(editor) {
         super(editor);
+        this.pinSymbol = '📌';  // Define the pin symbol
         this.savedRange = null;  // To store the range before switching modes
     }
 
     init() {
         const editor = this.editor;
-        const pinSymbol = '📌';
         const sourceEditing = editor.plugins.get('SourceEditing');
 
         // Add a button to the editor UI
@@ -17,7 +17,7 @@ export default class Textselection extends Plugin {
             const view = new ButtonView(locale);
 
             view.set({
-                label: '📌',
+                label: this.pinSymbol,
                 withText: true,
                 tooltip: true
             });
@@ -25,14 +25,15 @@ export default class Textselection extends Plugin {
             // Execute a command when the button is clicked
             view.on('execute', () => {
                 editor.model.change(writer => {
+                    // Insert the pin symbol at the current cursor position
                     const insertPosition = editor.model.document.selection.getFirstPosition();
-                    writer.insertText(pinSymbol, insertPosition);
+                    writer.insertText(this.pinSymbol, insertPosition);
                 });
             });
 
             // Handle enabling/disabling the button based on SourceEditing mode
             this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
-                view.isEnabled = !isSourceEditingMode;  // Disable in SourceEditing mode
+                view.isEnabled = !isSourceEditingMode;  // Disable the button in SourceEditing mode
             });
 
             return view;
