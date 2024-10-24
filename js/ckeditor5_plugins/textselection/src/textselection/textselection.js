@@ -4,12 +4,12 @@ import { ButtonView } from 'ckeditor5/src/ui';
 export default class Textselection extends Plugin {
     constructor(editor) {
         super(editor);
+        this.pinSymbol = '📌';  // Define the pin symbol
         this.savedRange = null;  // To store the range before switching modes
     }
 
     init() {
         const editor = this.editor;
-        const pinSymbol = '📌';
         const sourceEditing = editor.plugins.get('SourceEditing');
 
         // Add a button to the editor UI
@@ -17,7 +17,7 @@ export default class Textselection extends Plugin {
             const view = new ButtonView(locale);
 
             view.set({
-                label: '📌',
+                label: this.pinSymbol,
                 withText: true,
                 tooltip: true
             });
@@ -25,8 +25,12 @@ export default class Textselection extends Plugin {
             // Execute a command when the button is clicked
             view.on('execute', () => {
                 editor.model.change(writer => {
+                    // First, check if a pin already exists and remove it
+                    this.removeExistingPin(writer);
+
+                    // Insert a new pin symbol at the current cursor position
                     const insertPosition = editor.model.document.selection.getFirstPosition();
-                    writer.insertText(pinSymbol, insertPosition);
+                    writer.insertText(this.pinSymbol, insertPosition);
                 });
             });
 
@@ -48,6 +52,27 @@ export default class Textselection extends Plugin {
                 this.restoreCursorPosition();
             }
         });
+    }
+
+    // Function to remove the existing pin symbol from the editor content
+    removeExistingPin(writer) {
+        const editor = this.editor;
+        const root = editor.model.document.getRoot();
+
+        // Iterate through all the nodes in the editor
+        for (const range of editor.model.createRangeIn(root)) {
+            for (const item of range.getItems()) {
+                // Check if the text node contains the pin symbol
+                if (item.is('$text') && item.data.includes(this.pinSymbol)) {
+                    // Remove the pin symbol
+                    const start = editor.model.createPositionAt(item, 0);
+                    const end = editor.model.createPositionAt(item, item.data.length);
+                    const rangeToRemove = editor.model.createRange(start, end);
+                    writer.remove(rangeToRemove);
+                    break;  // Stop after removing the first pin found
+                }
+            }
+        }
     }
 
     saveCursorPosition() {
