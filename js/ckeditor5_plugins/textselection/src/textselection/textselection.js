@@ -42,7 +42,7 @@ export default class Textselection extends Plugin {
         // Save the cursor position when switching to SourceEditing mode
         this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
             if (isSourceEditingMode) {
-                // Save the current selection (cursor) before switching to SourceEditing mode
+                // Save the current model selection (cursor) before switching to SourceEditing mode
                 this.saveCursorPosition();
             } else {
                 // Restore the cursor position after switching back to WYSIWYG mode
@@ -51,34 +51,31 @@ export default class Textselection extends Plugin {
         });
     }
 
+    // Save the model cursor position (selection range)
     saveCursorPosition() {
         const editor = this.editor;
-        const view = editor.editing.view;
+        const model = editor.model;
+        const selection = model.document.selection;
 
-        // Get the current selection in the view
-        const viewSelection = view.document.selection;
-        this.savedRange = viewSelection.getFirstRange();  // Save the range
+        // Save the current range from the model selection
+        if (selection.rangeCount > 0) {
+            this.savedRange = selection.getFirstRange().clone();
+        }
     }
 
+    // Restore the model cursor position
     restoreCursorPosition() {
         const editor = this.editor;
         const model = editor.model;
-        const view = editor.editing.view;
 
         // Make sure we have a saved range before attempting to restore
         if (this.savedRange) {
-            // Restore the saved range in the model
             model.change(writer => {
-                const newRange = writer.createRange(
-                    model.createPositionFromPath(model.document.getRoot(), this.savedRange.start.path),
-                    model.createPositionFromPath(model.document.getRoot(), this.savedRange.end.path)
-                );
-
-                // Set the restored selection in the model
-                writer.setSelection(newRange);
+                // Restore the saved selection range
+                writer.setSelection(this.savedRange);
 
                 // Scroll the view to the restored selection
-                view.scrollToTheSelection();
+                editor.editing.view.scrollToTheSelection();
             });
         }
     }
