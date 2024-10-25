@@ -26,19 +26,17 @@ export default class Textselection extends Plugin {
             });
 
             // Handle enabling/disabling the button based on SourceEditing mode
-            this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
-                view.isEnabled = !isSourceEditingMode;  // Disable in SourceEditing mode
-            });
+            if (sourceEditing) {
+                this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
+                    view.isEnabled = !isSourceEditingMode;  // Disable in SourceEditing mode
+                    if (!isSourceEditingMode) {
+                        // Only attempt scroll when back in WYSIWYG
+                        this.scrollToCursorPosition();
+                    }
+                });
+            }
 
             return view;
-        });
-
-        // Listen for the mode switch and scroll to cursor when switching back to WYSIWYG
-        this.listenTo(sourceEditing, 'change:isSourceEditingMode', (evt, propertyName, isSourceEditingMode) => {
-            if (!isSourceEditingMode) {
-                // Switch back to WYSIWYG - Scroll to the cursor
-                this.scrollToCursorPosition();
-            }
         });
     }
 
